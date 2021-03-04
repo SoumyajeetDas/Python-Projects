@@ -95,8 +95,6 @@ def temperature():
 
 
 
-
-
 def dates():
     '''
     Determining today's date
