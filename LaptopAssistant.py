@@ -9,7 +9,6 @@ import pyttsx3
 import requests
 import json
 from datetime import datetime,date
-import time
 import speech_recognition as sr
 import webbrowser
 import os
@@ -158,9 +157,9 @@ def timing():
     '''
     Determining current time
     '''
-    t=time.localtime()
-    hour=int(time.strftime("%H",t))
-    min=int(time.strftime("%M",t))
+
+    hour=datetime.now().hour
+    min=datetime.now().minute
 
     if hour>12:
         hour=hour-12
