@@ -3,18 +3,20 @@
 # pyaudio
 # pywin32 - Text to Speech
 # pyinstaller- Python file to .exe
-
+# Weather API used from - https://openweathermap.org/
 
 import pyttsx3
 import requests
 import json
 from datetime import datetime,date
+import time
 import speech_recognition as sr
 import webbrowser
 import os
 import random
 import pywhatkit
-speak=pyttsx3.init() # sapi5 provides two voices on windows male and female
+import calendar
+speak=pyttsx3.init('sapi5') # sapi5 provides two voices on windows male and female
                             #.init creates Instance of Text to Speech Engine
 vocal=speak.getProperty('voices') # getproperty gets the list of voices.Voice object i.e. David and Zira supported by the driver
 speak.setProperty('voice',vocal[1].id) # Adds the property here it adds the property that it will talk in female voice
@@ -62,8 +64,13 @@ def weatherreport():
     '''
     Determing the current weather condition
     '''
-    r=requests.get("https://api.openweathermap.org/data/2.5/weather?q=Chandannagar&appid=58aced8999bab58e22c7ec3338d791d8")
-    data=json.loads(r.text)
+    r=requests.get("https://api.openweathermap.org/data/2.5/weather?q=Chandannagar&appid=58aced8999bab58e22c7ec3338d791d8") #requests.get() is used to request data from website with a url and retrieve it .
+                                                                                                                # r contains the info that is being requested
+    # data=json.loads(r.content)     .content provides the raw bytes of the response payload
+    data=json.loads(r.text)  # .text convert the payload into JSON string using the character encoding UTF-8
+                                # json.loads parses the JSON string into Python dictionary
+
+# The whole Python dict is present in the data
     weather=data['weather'][0]['main']
     print("Climatic Condition :",weather)
     speak.say(f"Climatic condition is {weather}")
@@ -78,19 +85,25 @@ def weatherreport():
     print(f"Humidity : {humidity}%")
     speak.say(f"Humidity is {humidity} percent")
     speak.runAndWait()
-    speak.say("Thank You")
-    speak.runAndWait()
+
 
 
 
 
 
 def temperature():
+    '''
+    Determining today's temperature
+    '''
+    r = requests.get("https://api.openweathermap.org/data/2.5/weather?q=Chandannagar&appid=58aced8999bab58e22c7ec3338d791d8")
+    data = json.loads(r.text)
+    weather = data['weather'][0]['main']
     temp = int(data['main']['temp'] - 273.15)
     print(f"Temperature : {temp}°C")
     feeltemp = int(data['main']['feels_like'] - 273.15)
     print(f"Feels Like : {feeltemp}°C")
     speak.say(f"Temperature is {temp} degree celcius but feels like {feeltemp} degree celcius")
+    speak.runAndWait()
 
 
 
@@ -123,6 +136,61 @@ def dates():
 
 
 
+def daying():
+    '''
+    Determining today's day
+    '''
+    
+    dat=date.today().day
+    month=date.today().month
+    year=date.today().year
+
+    d=calendar.weekday(year,month,dat)
+    li=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
+
+    print(f"Today is {li[d]}")
+    speak.say(f"Today is {li[d]}")
+    speak.runAndWait()
+
+
+
+def timing():
+    '''
+    Determining current time
+    '''
+    t=time.localtime()
+    hour=int(time.strftime("%H",t))
+    min=int(time.strftime("%M",t))
+
+    if hour>12:
+        hour=hour-12
+        if hour==1:
+            speak.say(f"It's {hour} our {min} minutes")
+            print(f"{hour} hour {min} minutes")
+            speak.runAndWait()
+        else:
+            speak.say(f"It's {hour} ours {min} minutes")
+            print(f"{hour} hours {min} minutes")
+            speak.runAndWait()
+    elif hour==0:
+        hour+=12
+        speak.say(f"It's {hour} ours {min} minutes ")
+        print(f"{hour} hours {min} minutes")
+        speak.runAndWait()
+    else:
+        if hour==1:
+            speak.say(f"It's {hour} our {min} minutes")
+            print(f"{hour} hour {min} minutes")
+            speak.runAndWait()
+        else:
+            speak.say(f"It's {hour} ours {min} minutes")
+            print(f"{hour} hours {min} minutes")
+            speak.runAndWait()
+
+
+
+
+
     
 
 def ListenandContinueListen():
@@ -144,8 +212,8 @@ def listcando():
     speak.say('I can provide you with')
     speak.say("Weather Report")
     print("1. Weather Report")
-    speak.say("Todays date")
-    print("2. Today's Date")
+    speak.say("Todays date day and time")
+    print("2. Today's Date day and time")
     speak.say("Opening of github Spotify google youtube word excel powerpoint")
     print("3. Opening of Github Spotify Google Youtube Word Excel Powerpoint")
     speak.say("Listening to music")
@@ -198,8 +266,14 @@ while True:
             print("========================================================================")
             count+=1
 
+        elif 'time' in k:
+            timing()
+            print("========================================================================")
+            count += 1
+
+
         elif 'temperature' in k:
-            weatherreport()
+            temperature()
             print("========================================================================")
             count += 1
 
@@ -207,6 +281,12 @@ while True:
             dates()
             print("========================================================================")
             count+=1
+
+
+        elif 'day' in k or 'de' in k:
+            daying()
+            print("========================================================================")
+            count += 1
 
         elif 'spotify' in k:
             print("Opening Spotify for you")
@@ -360,16 +440,17 @@ while True:
 
         else:
             speak.say("Sorry I don't know how to do that")
-            speak.say("Please try again")
+            print("========================================================================")
             speak.runAndWait()
+            count+=1
 
 
 
     else:
         speak.say('Anything else?')
         speak.say('Just Say Yes or No')
-        print('Yes or No')
         speak.runAndWait()
+        print('Yes or No')
         k=ListenandContinueListen()
         k=k.lower()
 
@@ -385,12 +466,21 @@ while True:
                 weatherreport()
                 print("========================================================================")
 
+            elif 'time' in p:
+                timing()
+                print("========================================================================")
+
+
             elif 'temperature' in p:
-                weatherreport()
+                temperature()
                 print("========================================================================")
 
             elif 'date' in p:
                 dates()
+                print("========================================================================")
+
+            elif 'day' in p or 'de' in p:
+                daying()
                 print("========================================================================")
 
             elif 'spotify' in p:
@@ -543,7 +633,7 @@ while True:
             else:
 
                 speak.say("Sorry I don't know how to do that")
-                speak.say("Please try again")
+                print("========================================================================")
                 speak.runAndWait()
             count+=1
 
