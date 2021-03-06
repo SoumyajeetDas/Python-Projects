@@ -291,7 +291,7 @@ while True:
             print("Opening Spotify for you")
             speak.say("Opening Spotify for you")
             speak.runAndWait()
-            webbrowser.open('https://open.spotify.com/')
+            webbrowser.open('https://open.spotify.com/') # webbrowser.open opens a specific url or page in the default webbrowser of your computer
             print("========================================================================")
             count+=1
 
@@ -317,9 +317,10 @@ while True:
             speak.say("Opening Music for you")
             speak.runAndWait()
             dir='D:\\Music'
-            songs=os.listdir(dir)
+            songs=os.listdir(dir) # List all the files in the directory present in th list format
             k=random.randint(0,567)
-            os.startfile(os.path.join(dir,songs[k]))
+            os.startfile(os.path.join(dir,songs[k])) # os.path.join various path components
+                    #os.startfile starts a file with associated softwares like a music will be opened by music player or a word with MS WORD
             count+=1
             print("========================================================================")
             
@@ -356,7 +357,7 @@ while True:
                 print('Searching.......')
                 speak.say('Searching PLease wait')
                 speak.runAndWait()
-                pywhatkit.playonyt(k)
+                pywhatkit.playonyt(k) # opens youtube and serches for what is passed in the function
             except:
                 print('An error occured')
                 speak.say('An error occured')
@@ -386,7 +387,7 @@ while True:
                 print('Searching.......')
                 speak.say('Searching PLease wait')
                 speak.runAndWait()
-                pywhatkit.search(k)
+                pywhatkit.search(k) #opens google and serches for what is passed in the function
             except:
                 print('An error occured')
                 speak.say('An error occured')
